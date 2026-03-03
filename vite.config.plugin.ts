@@ -5,6 +5,14 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 import figmaManifest from "./figma.manifest";
 
 export default defineConfig(({ mode }) => ({
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2017',
+    },
+  },
+  esbuild: {
+    target: 'es2017',
+  },
   plugins: [
     viteSingleFile(),
     generateFile({
@@ -18,11 +26,15 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode !== 'production' ? 'inline' : false,
     target: 'es2017',
     emptyOutDir: false,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     outDir: path.resolve("dist"),
     rollupOptions: {
       input: path.resolve('src/plugin/plugin.ts'),
       output: {
         entryFileNames: 'plugin.js',
+        format: 'iife',
       },
     },
   },

@@ -6,7 +6,7 @@ export const UI_CHANNEL = UI.channelBuilder()
   })
   .receivesFrom(PLUGIN, (next) => {
     const listener = (event: MessageEvent) => {
-      if (event.data?.pluginId == null) return;
+      if (!event.data || event.data.pluginId == null) return;
       next(event.data.pluginMessage);
     };
 

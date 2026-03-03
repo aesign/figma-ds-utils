@@ -7,12 +7,21 @@ import postcssUrl from "postcss-url";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2017',
+    },
+  },
+  esbuild: {
+    target: 'es2017',
+  },
   plugins: [react(), richSvg(), viteSingleFile()],
   root: path.resolve("src/ui"),
   build: {
     minify: mode === "production",
     cssMinify: mode === "production",
     sourcemap: mode !== "production" ? "inline" : false,
+    target: 'es2017',
     emptyOutDir: false,
     outDir: path.resolve("dist"),
     rollupOptions: {

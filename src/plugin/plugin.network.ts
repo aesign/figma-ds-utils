@@ -1,4 +1,5 @@
 import { PLUGIN, UI } from "@common/networkSides";
+import { sendSelectionState } from "./utils";
 
 export const PLUGIN_CHANNEL = PLUGIN.channelBuilder()
   .emitsTo(UI, (message) => {
@@ -11,7 +12,7 @@ export const PLUGIN_CHANNEL = PLUGIN.channelBuilder()
   })
   .startListening();
 
-// ---------- Message handlers
+// ---------- Original demo handlers
 
 PLUGIN_CHANNEL.registerMessageHandler("ping", () => {
   return "pong";
@@ -57,4 +58,28 @@ PLUGIN_CHANNEL.registerMessageHandler("exportSelection", async () => {
   });
 
   return "data:image/png;base64," + figma.base64Encode(bytes);
+});
+
+// ---------- DS Utils handlers
+
+// Selection Variables handlers
+PLUGIN_CHANNEL.registerMessageHandler("request-selection-state", () => {
+  sendSelectionState();
+});
+
+PLUGIN_CHANNEL.registerMessageHandler("selection-find-replace-bound-vars-preview", async (data) => {
+  // Import and call the handler from selection-variables feature
+  const selectionVars = await import("./features/selection-variables");
+  return await selectionVars.handleSelectionFindReplacePreview(data);
+});
+
+PLUGIN_CHANNEL.registerMessageHandler("selection-find-replace-bound-vars", async (data) => {
+  // Import and call the handler from selection-variables feature  
+  const selectionVars = await import("./features/selection-variables");
+  return await selectionVars.handleSelectionFindReplace(data);
+});
+
+// Set up selection change listener for Selection Variables
+figma.on('selectionchange', () => {
+  sendSelectionState();
 });
